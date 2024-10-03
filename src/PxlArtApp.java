@@ -14,11 +14,19 @@ public class PxlArtApp extends JFrame {
         JPanel headerPanel = new JPanel();
         add(headerPanel, BorderLayout.NORTH);
 
-        JButton saveButton = new JButton("Save");
+        JButton saveButton = new JButton("Save image");
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dessin.saveImage();
+            }
+        });
+
+        JButton saveRealSizeButton = new JButton("Save real size image");
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dessin.saveRealSizeImage();
             }
         });
 
@@ -32,9 +40,10 @@ public class PxlArtApp extends JFrame {
 
 
         headerPanel.add(saveButton);
+        headerPanel.add(saveRealSizeButton);
         headerPanel.add(openButton);
 
-
+        //PROBLEME : on dirait que tous les boutons sont superposés sous le bouton save, meme si ils s'affichent correctement
 
 
 
@@ -53,7 +62,7 @@ public class PxlArtApp extends JFrame {
         add(colorPanel, BorderLayout.SOUTH);
 
         // Liste des couleurs prédéfinies
-        Color[] colors = {Color.BLACK, Color.WHITE, Color.GREEN, Color.BLUE, Color.RED, Color.ORANGE, Color.YELLOW};
+        Color[] colors = {Color.BLACK, Color.WHITE, Color.GREEN, Color.CYAN, Color.BLUE, Color.RED, Color.ORANGE, Color.YELLOW};
 
         // Création des boutons de couleur
         for (Color color : colors) {
@@ -88,8 +97,7 @@ public class PxlArtApp extends JFrame {
         setTitle("PxlArt Editor");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(700, 700);
-        
-        setMinimumSize(new Dimension(dessin.getGridWidth() * (dessin.getCellSize() + 2), dessin.getGridHeight() * (dessin.getGridHeight() + 2) + 60));
+        setResizable(false);
     }
 
     public static void main(String[] args) {

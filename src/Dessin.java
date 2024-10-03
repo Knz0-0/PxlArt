@@ -1,16 +1,20 @@
+import org.w3c.dom.css.RGBColor;
+
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 
 public class Dessin extends JPanel {
-    private static final int CELL_SIZE = 25;
-    private static final int GRID_WIDTH = 20;
-    private static final int GRID_HEIGHT = 20;
+    private static  int CELL_SIZE = 25;
+    private static  int GRID_WIDTH = 20;
+    private static  int GRID_HEIGHT = 20;
     private Color[][] gridColors;
     private Color currentColor = Color.BLACK;
     private boolean showGrid = false;
@@ -41,11 +45,18 @@ public class Dessin extends JPanel {
         });
     }
 
+    /**
+     * affiche ou cache la grille
+     */
     public void toggleGrid(){
         showGrid = !showGrid;
         repaint();
     }
 
+    /**
+     * calcule la case à colorier en fonction de la position de la souris sur le jpanel
+     * @param e
+     */
     private void colorierCellule(MouseEvent e) {
         int col = e.getX() / (CELL_SIZE + 1);
         int row = e.getY() / (CELL_SIZE + 1);
@@ -85,38 +96,56 @@ public class Dessin extends JPanel {
     }
 
 
-    // methode pour sauvegarder l'image
+    //PROBLEME avec saveImage et openImage. openimage se déclenche
+    //quand on clique sur le bouton save, et pas le bouton open. le bouton save devient donc inutile
+
+    /**
+     * sauvegarde le dessin dans un fichier .png
+     */
     public void saveImage(){
-        /*//version 1 case = 1 px
+        //version 1 case = 1 px
         BufferedImage image = new BufferedImage(GRID_WIDTH, GRID_HEIGHT, BufferedImage.TYPE_INT_RGB);
         for (int x = 0; x < GRID_WIDTH; x++) {
             for (int y = 0; y < GRID_HEIGHT; y++) {
                 image.setRGB(x, y, gridColors[x][y].getRGB());
             }
-        }*/
+        }
 
+
+        try {
+            // version 1 case = 1px
+            File outputfile = new File("pixel_art_image.png"); // pour le test, l'image est sauvegardée à la racine du projet
+            ImageIO.write(image, "png", outputfile);
+            JOptionPane.showMessageDialog(this, "Image saved as pixel_art_image.png");
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error saving image: " + e.getMessage());
+        }
+
+        repaint();
+    }
+
+    public void saveRealSizeImage(){
         //version taille réelle
-        BufferedImage imageTailleReelle = new BufferedImage(GRID_WIDTH * (CELL_SIZE + 1), GRID_HEIGHT * (CELL_SIZE + 1), BufferedImage.TYPE_INT_RGB);
+
+        BufferedImage imageTailleReelle = new BufferedImage(GRID_WIDTH * CELL_SIZE, GRID_HEIGHT * CELL_SIZE, BufferedImage.TYPE_INT_RGB);
         for (int x = 0; x < GRID_WIDTH; x++) {
             for (int y = 0; y < GRID_HEIGHT; y++) {
-                for (int xr = 0; xr < CELL_SIZE; x++) {
-                    for (int yr = 0; yr < CELL_SIZE; y++) {
+                for (int xr = 0; xr < CELL_SIZE; xr++) {
+                    for (int yr = 0; yr < CELL_SIZE; yr++) {
                         imageTailleReelle.setRGB(x * CELL_SIZE + xr, y * CELL_SIZE + yr, gridColors[x][y].getRGB());
 
                         //debug
-                        System.out.println("pixel (" + (x+xr) + " ; " + (y+yr) + ") écrit : " + gridColors[x][y]);
+                        // System.out.println("pixel (" + (x+xr) + " ; " + (y+yr) + ") écrit : " + gridColors[x][y]);
                     }
                 }
             }
         }
 
+
         try {
-            /*// Choisir un chemin pour sauvegarder le fichier
-            File outputfile = new File("pixel_art_image.png"); // pour le test, l'image est sauvegardée à la racine du projet
-            ImageIO.write(image, "png", outputfile);
-            JOptionPane.showMessageDialog(this, "Image saved as pixel_art_image.png");*/
 
-
+            //version taille réelle
             File outputfileRealSize = new File("pixel_art_image_taille_reelle.png"); // pour le test, l'image est sauvegardée à la racine du projet
             ImageIO.write(imageTailleReelle, "png", outputfileRealSize);
             JOptionPane.showMessageDialog(this, "Image saved as pixel_art_image_taille_reelle.png");
@@ -124,20 +153,35 @@ public class Dessin extends JPanel {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error saving image: " + e.getMessage());
         }
-
     }
 
+
+    /**
+     * ouvre un fichier .png et permet de le modifier
+     */
     public void openImage(){
+        BufferedImage image;
+        try{
+
+            File inputFile = new File("pixel_art_image.png");
+            image = ImageIO.read(inputFile);
+            JOptionPane.showMessageDialog(this, "Opened " + inputFile.getPath());
+            GRID_WIDTH = image.getWidth();
+            GRID_HEIGHT = image.getHeight();
+
+            for (int x = 0; x < GRID_WIDTH; x++){
+                for (int y = 0; y < GRID_HEIGHT; y++) {
+                    gridColors[x][y] = new Color(image.getRGB(x, y));
+                }
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error opening image: " + e.getMessage());
+        }
+
+        repaint();
 
     }
-
-
-
-
-
-
-
-
 
 
 
