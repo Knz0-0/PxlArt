@@ -9,11 +9,12 @@ public class PxlArtApp extends JFrame {
     public PxlArtApp() {
         setLayout(new BorderLayout());
 
-
         //création du "header"
         JPanel headerPanel = new JPanel();
         add(headerPanel, BorderLayout.NORTH);
 
+
+        //bouton save
         JButton saveButton = new JButton("Save image");
         saveButton.addActionListener(new ActionListener() {
             @Override
@@ -21,27 +22,29 @@ public class PxlArtApp extends JFrame {
                 dessin.saveImage();
             }
         });
+        headerPanel.add(saveButton);
 
+        // 2e bouton save
         JButton saveRealSizeButton = new JButton("Save real size image");
-        saveButton.addActionListener(new ActionListener() {
+        saveRealSizeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dessin.saveRealSizeImage();
             }
         });
+        headerPanel.add(saveRealSizeButton);
 
+        //bouton open
         JButton openButton = new JButton("Open");
-        saveButton.addActionListener(new ActionListener() {
+        openButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dessin.openImage();
             }
         });
-
-
-        headerPanel.add(saveButton);
-        headerPanel.add(saveRealSizeButton);
         headerPanel.add(openButton);
+
+
 
         //PROBLEME : on dirait que tous les boutons sont superposés sous le bouton save, meme si ils s'affichent correctement
 
@@ -89,6 +92,20 @@ public class PxlArtApp extends JFrame {
             }
         });
         colorPanel.add(toggleGridButton);
+
+        // Ajout du bouton "clear"
+        JButton clearButton = new JButton("Clear");
+        clearButton.setPreferredSize(new Dimension(100, 30));
+        clearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dessin.clear();// Appel de la méthode pour tout "effacer" (mettre toutes les cases en blanc)
+
+            }
+        });
+        colorPanel.add(clearButton); // meme probleme que pour les boutons du header
+
+
 
         // Ajout du panneau de dessin centré
         add(drawingPanelWrapper, BorderLayout.CENTER);

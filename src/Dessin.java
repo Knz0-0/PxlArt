@@ -12,9 +12,9 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Dessin extends JPanel {
-    private static  int CELL_SIZE = 25;
-    private static  int GRID_WIDTH = 20;
-    private static  int GRID_HEIGHT = 20;
+    private static int CELL_SIZE = 25;
+    private static int GRID_WIDTH = 20;
+    private static int GRID_HEIGHT = 20;
     private Color[][] gridColors;
     private Color currentColor = Color.BLACK;
     private boolean showGrid = false;
@@ -52,6 +52,16 @@ public class Dessin extends JPanel {
         showGrid = !showGrid;
         repaint();
     }
+
+    public void clear(){
+        for (int x = 0; x < GRID_WIDTH; x++) {
+            for (int y = 0; y < GRID_HEIGHT; y++) {
+                gridColors[x][y] = Color.WHITE;
+            }
+        }
+        repaint();
+    }
+
 
     /**
      * calcule la case à colorier en fonction de la position de la souris sur le jpanel
@@ -161,27 +171,31 @@ public class Dessin extends JPanel {
      */
     public void openImage(){
         BufferedImage image;
-        try{
-
+        try {
             File inputFile = new File("pixel_art_image.png");
             image = ImageIO.read(inputFile);
             JOptionPane.showMessageDialog(this, "Opened " + inputFile.getPath());
+
+            // Redimensionner la grille en fonction de l'image ouverte
             GRID_WIDTH = image.getWidth();
             GRID_HEIGHT = image.getHeight();
 
-            for (int x = 0; x < GRID_WIDTH; x++){
+            gridColors = new Color[GRID_WIDTH][GRID_HEIGHT]; // Redimensionner la grille
+
+            for (int x = 0; x < GRID_WIDTH; x++) {
                 for (int y = 0; y < GRID_HEIGHT; y++) {
                     gridColors[x][y] = new Color(image.getRGB(x, y));
                 }
             }
-        }catch (IOException e){
+
+        } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error opening image: " + e.getMessage());
         }
 
-        repaint();
-
+        repaint();  // Repeindre la grille après avoir chargé une nouvelle image
     }
+
 
 
 
