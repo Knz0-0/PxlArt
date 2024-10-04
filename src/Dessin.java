@@ -96,7 +96,7 @@ public class Dessin extends JPanel {
 
                     // Dessiner les bordures de la cellule
                     if (showGrid){
-                        g.setColor(Color.BLACK);
+                        g.setColor(Color.GRAY);
                         g.drawRect(x, y, CELL_SIZE, CELL_SIZE);
                     }
 
@@ -197,8 +197,47 @@ public class Dessin extends JPanel {
     }
 
 
+    public void resizeGrid(int newWidth, int newHeight) {
+        // Créer un nouveau tableau temporaire avec la nouvelle taille
+        Color[][] newGridColors = new Color[newWidth][newHeight];
 
+        // Copier les couleurs de l'ancienne grille dans la nouvelle (dans les limites des dimensions)
+        for (int x = 0; x < Math.min(GRID_WIDTH, newWidth); x++) {
+            for (int y = 0; y < Math.min(GRID_HEIGHT, newHeight); y++) {
+                newGridColors[x][y] = gridColors[x][y];
+            }
+        }
 
+        // Remplir les nouvelles cases avec du blanc par défaut
+        for (int x = 0; x < newWidth; x++) {
+            for (int y = 0; y < newHeight; y++) {
+                if (newGridColors[x][y] == null) {
+                    newGridColors[x][y] = Color.WHITE;
+                }
+            }
+        }
+
+        // Mettre à jour les dimensions de la grille
+        GRID_WIDTH = newWidth;
+        GRID_HEIGHT = newHeight;
+
+        // Mettre à jour la grille
+        gridColors = newGridColors;
+
+        // Ajuster la taille de la zone de dessin
+        setPreferredSize(new Dimension(GRID_WIDTH * CELL_SIZE, GRID_HEIGHT * CELL_SIZE));
+
+        // Redessiner la fenêtre et ses composants
+        revalidate();
+        repaint();
+    }
+
+    public void resizeCell(int newSize){
+        CELL_SIZE = newSize;
+        setPreferredSize(new Dimension(GRID_WIDTH * CELL_SIZE, GRID_HEIGHT * CELL_SIZE));
+        revalidate();
+        repaint();
+    }
 
 
 
