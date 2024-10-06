@@ -20,7 +20,7 @@ public class PxlArtApp extends JFrame {
 
         // Création de la zone de dessin
         dessin = new Dessin();
-        dessin.setPreferredSize(new Dimension(400, 400)); // Dimensions préférées de la zone de dessin
+
 
         //création du "header"
         headerPanel = new JPanel();

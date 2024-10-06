@@ -20,6 +20,10 @@ public class Dessin extends JPanel {
     private boolean showGrid = false;
 
     public Dessin() {
+        
+        //paramètres de fenètre
+        setPreferredSize(new Dimension(400, 400)); // Dimensions préférées de la zone de dessin
+
         // Initialiser la grille avec des couleurs par défaut (par exemple, blanc)
         gridColors = new Color[GRID_WIDTH][GRID_HEIGHT];
         for (int i = 0; i < GRID_WIDTH; i++) {
@@ -241,6 +245,7 @@ public class Dessin extends JPanel {
 
 
 
+    //getters setters
 
     @Override
     public Dimension getPreferredSize() {
