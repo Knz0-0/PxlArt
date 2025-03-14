@@ -3,6 +3,7 @@ import org.w3c.dom.css.RGBColor;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -116,8 +117,8 @@ public class Dessin extends JPanel {
     /**
      * sauvegarde le dessin dans un fichier .png
      */
-    public void saveImage(){
-        //version 1 case = 1 px
+    public void saveImage() {
+        // Création de l'image avec la taille de la grille
         BufferedImage image = new BufferedImage(GRID_WIDTH, GRID_HEIGHT, BufferedImage.TYPE_INT_RGB);
         for (int x = 0; x < GRID_WIDTH; x++) {
             for (int y = 0; y < GRID_HEIGHT; y++) {
@@ -125,19 +126,37 @@ public class Dessin extends JPanel {
             }
         }
 
+        // Sélecteur de fichier
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Enregistrer sous...");
 
-        try {
-            // version 1 case = 1px
-            File outputfile = new File("pixel_art_image.png"); // pour le test, l'image est sauvegardée à la racine du projet
-            ImageIO.write(image, "png", outputfile);
-            JOptionPane.showMessageDialog(this, "Image saved as pixel_art_image.png");
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error saving image: " + e.getMessage());
+        // Filtre pour ne permettre que le PNG
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Fichiers PNG", "png");
+        fileChooser.setFileFilter(filter);
+
+        int userSelection = fileChooser.showSaveDialog(null);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            String filePath = fileToSave.getAbsolutePath();
+
+            // Ajoute .png si l'utilisateur ne l'a pas mis
+            if (!filePath.toLowerCase().endsWith(".png")) {
+                fileToSave = new File(filePath + ".png");
+            }
+
+            try {
+                ImageIO.write(image, "png", fileToSave);
+                JOptionPane.showMessageDialog(null, "Image sauvegardée sous : " + fileToSave.getAbsolutePath());
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Erreur lors de la sauvegarde : " + e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+            }
         }
 
         repaint();
     }
+
 
     public void saveRealSizeImage(){
         //version taille réelle
