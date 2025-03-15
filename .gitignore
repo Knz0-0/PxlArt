@@ -1,0 +1,44 @@
+# Ignorer les fichiers et dossiers générés par IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+out/
+build/
+
+# Ignorer les fichiers compilés
+*.class
+*.jar
+*.war
+*.ear
+
+# Ignorer les fichiers système
+.DS_Store
+Thumbs.db
+
+# Ignorer les fichiers de logs et de configuration spécifiques
+logs/
+*.log
+hs_err_pid*
+
+# Ignorer les dépendances locales (si non gérées par un gestionnaire comme Maven/Gradle)
+lib/
+
+# Ignorer les fichiers spécifiques à Windows ou MacOS
+*.exe
+*.bat
+*.cmd
+*.swp
+
+# Ignorer les images générées
+*.png
+*.jpg
+*.jpeg
+
+# Ignorer les fichiers temporaires et caches
+*.tmp
+*.bak
+
+# Ignorer les fichiers générés par Gradle/Maven (si jamais tu utilises l'un d'eux)
+.gradle/
+mvnw*
+target/
