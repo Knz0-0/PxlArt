@@ -158,66 +158,102 @@ public class Dessin extends JPanel {
     }
 
 
-    public void saveRealSizeImage(){
-        //version taille réelle
-
+    public void saveRealSizeImage() {
+        // Création de l'image avec la vraie taille
         BufferedImage imageTailleReelle = new BufferedImage(GRID_WIDTH * CELL_SIZE, GRID_HEIGHT * CELL_SIZE, BufferedImage.TYPE_INT_RGB);
         for (int x = 0; x < GRID_WIDTH; x++) {
             for (int y = 0; y < GRID_HEIGHT; y++) {
                 for (int xr = 0; xr < CELL_SIZE; xr++) {
                     for (int yr = 0; yr < CELL_SIZE; yr++) {
                         imageTailleReelle.setRGB(x * CELL_SIZE + xr, y * CELL_SIZE + yr, gridColors[x][y].getRGB());
-
-                        //debug
-                        // System.out.println("pixel (" + (x+xr) + " ; " + (y+yr) + ") écrit : " + gridColors[x][y]);
                     }
                 }
             }
         }
 
+        // Sélecteur de fichier
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Enregistrer l'image en taille réelle");
 
-        try {
+        // Filtre pour ne permettre que le PNG
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Fichiers PNG", "png");
+        fileChooser.setFileFilter(filter);
 
-            //version taille réelle
-            File outputfileRealSize = new File("pixel_art_image_taille_reelle.png"); // pour le test, l'image est sauvegardée à la racine du projet
-            ImageIO.write(imageTailleReelle, "png", outputfileRealSize);
-            JOptionPane.showMessageDialog(this, "Image saved as pixel_art_image_taille_reelle.png");
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error saving image: " + e.getMessage());
+        int userSelection = fileChooser.showSaveDialog(null);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            String filePath = fileToSave.getAbsolutePath();
+
+            // Ajoute .png si l'utilisateur ne l'a pas mis
+            if (!filePath.toLowerCase().endsWith(".png")) {
+                fileToSave = new File(filePath + ".png");
+            }
+
+            try {
+                ImageIO.write(imageTailleReelle, "png", fileToSave);
+                JOptionPane.showMessageDialog(null, "Image sauvegardée sous : " + fileToSave.getAbsolutePath());
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Erreur lors de la sauvegarde : " + e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
+
 
 
     /**
      * ouvre un fichier .png et permet de le modifier
      */
-    public void openImage(){
-        BufferedImage image;
-        try {
-            File inputFile = new File("pixel_art_image.png");
-            image = ImageIO.read(inputFile);
-            JOptionPane.showMessageDialog(this, "Opened " + inputFile.getPath());
+    public void openImage() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Ouvrir une image");
 
-            // Redimensionner la grille en fonction de l'image ouverte
-            GRID_WIDTH = image.getWidth();
-            GRID_HEIGHT = image.getHeight();
+        // Filtre pour n'accepter que les fichiers PNG
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Fichiers PNG", "png");
+        fileChooser.setFileFilter(filter);
 
-            gridColors = new Color[GRID_WIDTH][GRID_HEIGHT]; // Redimensionner la grille
+        int userSelection = fileChooser.showOpenDialog(null);
 
-            for (int x = 0; x < GRID_WIDTH; x++) {
-                for (int y = 0; y < GRID_HEIGHT; y++) {
-                    gridColors[x][y] = new Color(image.getRGB(x, y));
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File inputFile = fileChooser.getSelectedFile();
+
+            try {
+                BufferedImage image = ImageIO.read(inputFile);
+
+                if (image == null) {
+                    JOptionPane.showMessageDialog(null, "Le fichier sélectionné n'est pas une image valide.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
+
+                // Vérification de la taille max 32x32
+                if (image.getWidth() > 32 || image.getHeight() > 32) {
+                    JOptionPane.showMessageDialog(null, "Image trop grande ! Max : 32x32 pixels.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                JOptionPane.showMessageDialog(null, "Image ouverte : " + inputFile.getPath());
+
+                // Mise à jour de la grille en fonction de l'image
+                GRID_WIDTH = image.getWidth();
+                GRID_HEIGHT = image.getHeight();
+                gridColors = new Color[GRID_WIDTH][GRID_HEIGHT];
+
+                for (int x = 0; x < GRID_WIDTH; x++) {
+                    for (int y = 0; y < GRID_HEIGHT; y++) {
+                        gridColors[x][y] = new Color(image.getRGB(x, y));
+                    }
+                }
+
+                repaint(); // Repeindre la grille après chargement
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Erreur lors de l'ouverture : " + e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error opening image: " + e.getMessage());
         }
-
-        repaint();  // Repeindre la grille après avoir chargé une nouvelle image
     }
+
 
 
     public void resizeGrid(int newWidth, int newHeight) {
