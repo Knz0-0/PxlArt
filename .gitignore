@@ -2,7 +2,7 @@
 .idea/
 *.iml
 *.iws
-out/
+out/*
 build/
 
 # Ignorer les fichiers compilés
