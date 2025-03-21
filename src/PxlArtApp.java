@@ -103,12 +103,12 @@ public class PxlArtApp extends JFrame {
     private void addMainButtons() {
         // Boutons du header
         addButton(headerPanel, "Save image", e -> dessin.saveImage());
-        addButton(headerPanel, "Save real size image", e -> dessin.saveRealSizeImage());
+        // addButton(headerPanel, "Save real size image", e -> dessin.saveRealSizeImage());
         addButton(headerPanel, "Open", e -> dessin.openImage());
         addButton(colorPanel, "Clear", e -> dessin.clear());
         addButton(colorPanel, "Toggle grid", e -> dessin.toggleGrid());
         addButton(headerPanel, "Undo", e -> versionsManager.undo());
-        addButton(headerPanel, "redo", e -> versionsManager.redo());
+        addButton(headerPanel, "Redo", e -> versionsManager.redo());
     }
 
     private void createColorButtons() {
