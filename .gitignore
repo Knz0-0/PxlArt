@@ -6,6 +6,7 @@ out/*
 build/
 
 # Ignorer les fichiers compilés
+out/
 *.class
 *.jar
 *.war
@@ -29,16 +30,3 @@ lib/
 *.cmd
 *.swp
 
-# Ignorer les images générées
-*.png
-*.jpg
-*.jpeg
-
-# Ignorer les fichiers temporaires et caches
-*.tmp
-*.bak
-
-# Ignorer les fichiers générés par Gradle/Maven (si jamais tu utilises l'un d'eux)
-.gradle/
-mvnw*
-target/
