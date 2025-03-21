@@ -9,6 +9,7 @@ import java.io.IOException;
 public class PxlArtApp extends JFrame {
 
     private Dessin dessin;
+    private UndoRedo versionsManager;
     private Color[] colors = {Color.BLACK, Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE};
     private JPanel headerPanel;
     private JPanel colorPanel;
@@ -16,6 +17,18 @@ public class PxlArtApp extends JFrame {
     public PxlArtApp() {
         setLayout(new BorderLayout());
         dessin = new Dessin();
+        versionsManager = new UndoRedo(dessin);
+
+        dessin.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                versionsManager.saveState();
+            }
+        });
+
+
+
 
         // Création du header
         headerPanel = new JPanel();
@@ -94,6 +107,8 @@ public class PxlArtApp extends JFrame {
         addButton(headerPanel, "Open", e -> dessin.openImage());
         addButton(colorPanel, "Clear", e -> dessin.clear());
         addButton(colorPanel, "Toggle grid", e -> dessin.toggleGrid());
+        addButton(headerPanel, "Undo", e -> versionsManager.undo());
+        addButton(headerPanel, "redo", e -> versionsManager.redo());
     }
 
     private void createColorButtons() {

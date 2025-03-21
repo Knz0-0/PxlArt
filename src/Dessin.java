@@ -321,4 +321,14 @@ public class Dessin extends JPanel {
     public int getGridHeight(){
         return GRID_HEIGHT;
     }
+
+    public Color[][] getGridColors() {
+        return gridColors;
+    }
+
+    public void setGridColors(Color[][] gridColors) {
+        this.gridColors = gridColors;
+        revalidate();
+        repaint();
+    }
 }
