@@ -20,7 +20,7 @@ public class Dessin extends JPanel {
     private Color[][] gridColors;
     private Color currentColor = Color.BLACK;
     private boolean showGrid = false;
-    private int paintMode = 0; // 0 : 1 pixel, 1 : fill
+    private int paintMode = 0; // 0 : pixel, 1 : fill
 
     public Dessin() {
         
@@ -350,56 +350,43 @@ public class Dessin extends JPanel {
         gridColors[x][y] = color;
     }
 
+
+    
+    // other methods
+
+
     public void fill(MouseEvent e){
         int x = e.getX() / (CELL_SIZE + 1);
         int y = e.getY() / (CELL_SIZE + 1);
 
         Color colorToReplace = gridColors[x][y];
+
+        if(colorToReplace.equals(currentColor)) return;
+
         fillRecWorker(x, y, colorToReplace);
 
         revalidate();
         repaint();
     }
 
-    private void fillRecWorker(int x, int y, Color colorToReplace){
-        
-        
-        for (Coord coord : getAdjascentSquaresPlus(x, y)) {
+    private void fillRecWorker(int x, int y, Color colorToReplace) {
+    // Vérifie si on est hors des limites
+    if (x < 0 || x >= gridColors.length || y < 0 || y >= gridColors[0].length) return;
+
+    // Vérifie si la case est déjà remplie ou d'une autre couleur
+    if (!gridColors[x][y].equals(colorToReplace)) return;
+
+    setColor(x, y, currentColor);
+
+    // Appel récursif sur les cases adjacentes (DFS)
+    fillRecWorker(x - 1, y, colorToReplace); // Gauche
+    fillRecWorker(x + 1, y, colorToReplace); // Droite
+    fillRecWorker(x, y - 1, colorToReplace); // Haut
+    fillRecWorker(x, y + 1, colorToReplace); // Bas
+}
 
 
-            if(getColor(coord.getX(), coord.getY()) == colorToReplace){
-                setColor(coord.getX(), coord.getY(), currentColor);
-                fillRecWorker(coord.getX(), coord.getY(), colorToReplace);
-            }
-        }
-        
-    }
+    
 
-
-    private ArrayList<Coord> getAdjascentSquares(int x, int y){
-        ArrayList<Coord> adjascentSquares = new ArrayList<>();
-
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                if (!(x+i < 0 || x+i >= gridColors.length || y+j < 0 || y+j >= gridColors.length)) {
-                    adjascentSquares.add(new Coord(x+i, y+j));
-                }
-            }
-        }
-
-        return adjascentSquares;
-    }
-
-    private ArrayList<Coord> getAdjascentSquaresPlus(int x, int y){
-        ArrayList<Coord> adjascentSquares = new ArrayList<>();
-
-        adjascentSquares.add(new Coord(x, y));
-        if(x-1 >= 0) adjascentSquares.add(new Coord(x-1, y));
-        if(x+1 < gridColors.length) adjascentSquares.add(new Coord(x+1, y));
-        if(y-1 >= 0) adjascentSquares.add(new Coord(x, y-1));
-        if(y+1 < gridColors.length) adjascentSquares.add(new Coord(x, y+1));
-
-        return adjascentSquares;
-    }
 
 }
