@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Dessin extends JPanel {
     private static int CELL_SIZE = 25;
@@ -19,6 +20,7 @@ public class Dessin extends JPanel {
     private Color[][] gridColors;
     private Color currentColor = Color.BLACK;
     private boolean showGrid = false;
+    private int paintMode = 0; // 0 : 1 pixel, 1 : fill
 
     public Dessin() {
         
@@ -37,7 +39,8 @@ public class Dessin extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                colorierCellule(e);
+                if (paintMode == 0) colorierCellule(e);
+                if (paintMode == 1) fill(e);
             }
         });
 
@@ -56,6 +59,13 @@ public class Dessin extends JPanel {
     public void toggleGrid(){
         showGrid = !showGrid;
         repaint();
+    }
+
+    /**
+     * change le mode de dessin (peinceau, remplissage)
+     */
+    public void togglePaintMode(){
+        paintMode = (paintMode == 0) ? 1 : 0;
     }
 
     public void clear(){
@@ -77,7 +87,7 @@ public class Dessin extends JPanel {
         int row = e.getY() / (CELL_SIZE + 1);
 
         if (col < GRID_WIDTH && row < GRID_HEIGHT && col >= 0 && row >= 0) {
-            // Colorier la cellule avec la couleur actuelle (par exemple, rouge)
+            // Colorier la cellule avec la couleur actuelle 
             gridColors[col][row] = currentColor;
             repaint();
         }
@@ -111,9 +121,7 @@ public class Dessin extends JPanel {
     }
 
 
-    //PROBLEME avec saveImage et openImage. openimage se déclenche
-    //quand on clique sur le bouton save, et pas le bouton open. le bouton save devient donc inutile
-
+    
     /**
      * sauvegarde le dessin dans un fichier .png
      */
@@ -331,4 +339,67 @@ public class Dessin extends JPanel {
         revalidate();
         repaint();
     }
+
+    public Color getColor(int x, int y){
+        // on suppose que les coordonnees sont valides
+        return gridColors[x][y];
+    }
+
+    public void setColor(int x, int y, Color color){
+        // on suppose que les coordonnees sont valides
+        gridColors[x][y] = color;
+    }
+
+    public void fill(MouseEvent e){
+        int x = e.getX() / (CELL_SIZE + 1);
+        int y = e.getY() / (CELL_SIZE + 1);
+
+        Color colorToReplace = gridColors[x][y];
+        fillRecWorker(x, y, colorToReplace);
+
+        revalidate();
+        repaint();
+    }
+
+    private void fillRecWorker(int x, int y, Color colorToReplace){
+        
+        
+        for (Coord coord : getAdjascentSquaresPlus(x, y)) {
+
+
+            if(getColor(coord.getX(), coord.getY()) == colorToReplace){
+                setColor(coord.getX(), coord.getY(), currentColor);
+                fillRecWorker(coord.getX(), coord.getY(), colorToReplace);
+            }
+        }
+        
+    }
+
+
+    private ArrayList<Coord> getAdjascentSquares(int x, int y){
+        ArrayList<Coord> adjascentSquares = new ArrayList<>();
+
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                if (!(x+i < 0 || x+i >= gridColors.length || y+j < 0 || y+j >= gridColors.length)) {
+                    adjascentSquares.add(new Coord(x+i, y+j));
+                }
+            }
+        }
+
+        return adjascentSquares;
+    }
+
+    private ArrayList<Coord> getAdjascentSquaresPlus(int x, int y){
+        ArrayList<Coord> adjascentSquares = new ArrayList<>();
+
+        adjascentSquares.add(new Coord(x, y));
+        if(x-1 >= 0) adjascentSquares.add(new Coord(x-1, y));
+        if(x+1 < gridColors.length) adjascentSquares.add(new Coord(x+1, y));
+        if(y-1 >= 0) adjascentSquares.add(new Coord(x, y-1));
+        if(y+1 < gridColors.length) adjascentSquares.add(new Coord(x, y+1));
+
+        return adjascentSquares;
+    }
+
 }

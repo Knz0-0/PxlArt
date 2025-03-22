@@ -19,6 +19,8 @@ public class PxlArtApp extends JFrame {
         dessin = new Dessin();
         versionsManager = new UndoRedo(dessin);
 
+
+        // gestion des evenements pour versionManager
         dessin.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -109,6 +111,7 @@ public class PxlArtApp extends JFrame {
         addButton(colorPanel, "Toggle grid", e -> dessin.toggleGrid());
         addButton(headerPanel, "Undo", e -> versionsManager.undo());
         addButton(headerPanel, "Redo", e -> versionsManager.redo());
+        addButton(colorPanel, "draw/fill", e -> dessin.togglePaintMode());
     }
 
     private void createColorButtons() {
